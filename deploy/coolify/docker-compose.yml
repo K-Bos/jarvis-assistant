@@ -1,0 +1,23 @@
+services:
+  jarvis-assistant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    labels:
+      com.kbdigital.product: jarvis-assistant
+      com.kbdigital.logs: "true"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/health.html >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    environment:
+      SERVICE_URL_JARVISASSISTANT_80: /
+

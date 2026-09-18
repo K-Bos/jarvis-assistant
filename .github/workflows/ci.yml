@@ -26,4 +26,6 @@ jobs:
           test -f docs/development.md
           test -f docs/operations.md
           test -f docs/roadmap.md
-
+          test -f docs/coolify.md
+          test -f Dockerfile
+          test -f deploy/coolify/docker-compose.yml

@@ -1,0 +1,33 @@
+name: Deploy to Coolify
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Trigger Coolify deployment
+    runs-on: self-hosted
+    env:
+      COOLIFY_API_URL: ${{ secrets.COOLIFY_API_URL }}
+      COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+      COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID }}
+
+    steps:
+      - name: Trigger deployment when configured
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -z "${COOLIFY_API_URL:-}" ] || [ -z "${COOLIFY_API_TOKEN:-}" ] || [ -z "${COOLIFY_APP_UUID:-}" ]; then
+            echo "::notice::Coolify secrets are not configured yet; skipping deployment."
+            exit 0
+          fi
+
+          curl --fail-with-body --request POST \
+            --header "Authorization: Bearer ${COOLIFY_API_TOKEN}" \
+            --header "Accept: application/json" \
+            "${COOLIFY_API_URL}/deploy?uuid=${COOLIFY_APP_UUID}&force=false"
+
